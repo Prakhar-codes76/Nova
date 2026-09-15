@@ -1,24 +1,38 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 from app.config import settings
 from app.database import engine, Base
 from app.seed_data import seed_database
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Include API routers
 from app.routes import health, auth, profile, users, tasks, timetable, focus, progress, ai, search, voice_webhooks
 
 # Initialize Database tables and Seed data
-Base.metadata.create_all(bind=engine)
 try:
+    Base.metadata.create_all(bind=engine)
     seed_database()
 except Exception as e:
-    print(f"Seed note: {e}")
+    logger.warning(f"Database initialization note: {e}")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="Backend API service for Nova — AI Student Life Assistant"
 )
+
+# Global Exception Handler to prevent raw stack traces and provide clean 500 error details
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled server error at {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An internal server error occurred while processing your request. Please try again."}
+    )
 
 # Enable CORS for frontend integration
 app.add_middleware(

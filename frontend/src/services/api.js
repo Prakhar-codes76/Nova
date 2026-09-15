@@ -30,11 +30,13 @@ api.interceptors.response.use(
 
     let message = 'An unexpected API error occurred.';
     if (!error.response) {
-      message = 'Unable to connect to Nova server.';
-    } else if (error.response.status === 500) {
-      message = 'Nova server encountered an internal error.';
+      message = 'Unable to connect to Nova server. Please try again.';
     } else if (error.response.data?.detail) {
-      message = error.response.data.detail;
+      message = typeof error.response.data.detail === 'string' 
+        ? error.response.data.detail 
+        : JSON.stringify(error.response.data.detail);
+    } else if (error.response.status === 500) {
+      message = 'Nova server encountered an internal error. Please try again.';
     } else if (error.message) {
       message = error.message;
     }
