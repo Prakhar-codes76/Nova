@@ -31,7 +31,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled server error at {request.url.path}: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
-        content={"detail": "An internal server error occurred while processing your request. Please try again."}
+        content={"detail": f"Server error at {request.url.path}: {str(exc)}"}
     )
 
 # Enable CORS for frontend integration

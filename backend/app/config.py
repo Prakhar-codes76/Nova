@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 
 try:
     from dotenv import load_dotenv
@@ -8,36 +9,48 @@ except ImportError:
     pass
 
 def get_effective_db_url() -> str:
-    url = os.getenv("DATABASE_URL", "sqlite:///./nova.db")
-    if url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql://", 1)
+    url = os.getenv("DATABASE_URL", "").strip()
+    if url:
+        if url.startswith("postgres://"):
+            return url.replace("postgres://", "postgresql://", 1)
+        return url
 
-    if url.startswith("sqlite"):
-        is_vercel = bool(os.getenv("VERCEL") or os.getenv("VERCEL_ENV"))
+    # Default fallback: SQLite
+    is_vercel = bool(os.getenv("VERCEL") or os.getenv("VERCEL_ENV"))
+    
+    # Test if current directory is writable
+    is_writable = True
+    test_file = "./.write_test_tmp"
+    try:
+        with open(test_file, "w") as f:
+            f.write("1")
+        os.remove(test_file)
+    except Exception:
+        is_writable = False
+
+    if is_vercel or not is_writable:
+        tmp_dir = tempfile.gettempdir()
+        tmp_db_path = os.path.join(tmp_dir, "nova.db")
+        if not os.path.exists(tmp_db_path):
+            possible_seeds = ["./nova.db", "nova.db", "backend/nova.db", "../nova.db"]
+            for seed in possible_seeds:
+                if os.path.exists(seed) and os.path.isfile(seed):
+                    try:
+                        shutil.copyfile(seed, tmp_db_path)
+                        os.chmod(tmp_db_path, 0o666)
+                        break
+                    except Exception:
+                        pass
+        else:
+            try:
+                os.chmod(tmp_db_path, 0o666)
+            except Exception:
+                pass
         
-        # Test if current directory is writable
-        is_writable = True
-        test_file = "./.write_test_tmp"
-        try:
-            with open(test_file, "w") as f:
-                f.write("1")
-            os.remove(test_file)
-        except Exception:
-            is_writable = False
+        normalized_path = os.path.abspath(tmp_db_path).replace("\\", "/")
+        return f"sqlite:///{normalized_path}"
 
-        if is_vercel or not is_writable:
-            tmp_db_path = "/tmp/nova.db"
-            if not os.path.exists(tmp_db_path):
-                possible_seeds = ["./nova.db", "nova.db", "backend/nova.db", "../nova.db"]
-                for seed in possible_seeds:
-                    if os.path.exists(seed) and os.path.isfile(seed):
-                        try:
-                            shutil.copy2(seed, tmp_db_path)
-                            break
-                        except Exception:
-                            pass
-            return f"sqlite:///{tmp_db_path}"
-    return url
+    return "sqlite:///./nova.db"
 
 class Settings:
     PROJECT_NAME: str = "NOVA AI Student Life Assistant"
