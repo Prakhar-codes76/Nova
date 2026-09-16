@@ -61,6 +61,7 @@ function ProtectedLayout() {
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/timetable" element={<TimetablePage />} />
           <Route path="/ai-chat" element={<AIChatPage />} />
+          <Route path="/assistant" element={<AIChatPage />} />
           <Route path="/study-planner" element={<StudyPlannerPage />} />
           <Route path="/focus" element={<FocusPage />} />
           <Route path="/progress" element={<ProgressPage />} />

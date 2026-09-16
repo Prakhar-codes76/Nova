@@ -25,7 +25,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
     { path: '/tasks', label: 'My Tasks', icon: CheckSquare },
     { path: '/timetable', label: 'Timetable', icon: Calendar },
     { path: '/study-planner', label: 'AI Planner', icon: BrainCircuit },
-    { path: '/ai-chat', label: 'NOVA Assistant', icon: MessageSquare },
+    { path: '/assistant', label: 'NOVA Assistant', icon: MessageSquare },
     { path: '/focus', label: 'Focus Mode', icon: Timer },
     { path: '/progress', label: 'Analytics & Progress', icon: BarChart3 },
     { path: '/notifications', label: 'Notifications', icon: Bell },
