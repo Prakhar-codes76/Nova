@@ -9,6 +9,7 @@ import { Navbar } from './components/common/Navbar';
 import { Toast } from './components/common/Toast';
 import { VoiceAgentModal } from './components/voice/VoiceAgentModal';
 import { SplashScreen } from './components/common/SplashScreen';
+import { CinematicBackground } from './components/common/CinematicBackground';
 
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
@@ -19,7 +20,6 @@ import { DashboardPage } from './pages/DashboardPage';
 import { TasksPage } from './pages/TasksPage';
 import { TimetablePage } from './pages/TimetablePage';
 import { AIChatPage } from './pages/AIChatPage';
-import { StudyPlannerPage } from './pages/StudyPlannerPage';
 import { FocusPage } from './pages/FocusPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { NotificationsPage } from './pages/NotificationsPage';
@@ -34,15 +34,16 @@ function ProtectedLayout() {
     return (
       <div className="app-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#fff' }}>
         <div style={{ textAlign: 'center' }}>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Loading Nova...</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Authenticating user context</p>
+          <div className="status-dot-active" style={{ width: '14px', height: '14px', marginBottom: '1rem' }} />
+          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>Initialising NOVA...</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Authenticating user session & neural context</p>
         </div>
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/landing" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -63,14 +64,13 @@ function ProtectedLayout() {
           <Route path="/timetable" element={<TimetablePage />} />
           <Route path="/ai-chat" element={<AIChatPage />} />
           <Route path="/assistant" element={<AIChatPage />} />
-          <Route path="/study-planner" element={<StudyPlannerPage />} />
           <Route path="/focus" element={<FocusPage />} />
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/analytics" element={<ProgressPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>
       <VoiceAgentModal />
@@ -93,6 +93,7 @@ export function App() {
     <AuthProvider>
       <AppProvider>
         <ConversationProvider>
+          <CinematicBackground />
           {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
           <Router>
             <Routes>

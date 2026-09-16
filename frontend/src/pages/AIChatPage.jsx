@@ -5,16 +5,15 @@ import {
   Mic,
   MicOff,
   Send,
-  Compass,
+  Globe,
   CheckCircle2,
   Volume2,
-  ArrowUp,
-  RefreshCw,
-  Globe,
   Bot,
   Radio,
-  ShieldCheck,
-  VolumeX
+  Clock,
+  Flame,
+  Brain,
+  MessageSquare
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
@@ -30,7 +29,7 @@ export const AIChatPage = () => {
   const [messages, setMessages] = useState([
     {
       source: 'ai',
-      text: "Namaste! I'm Nova, your AI assistant. I can speak Hindi, Hinglish, English, Bhojpuri, Tamil, Telugu, and more. How can I help you today? 🎙️"
+      text: "Namaste! I am NOVA, your AI Student Life Assistant. I can understand Hindi, Hinglish, and English. Ask me about your tasks, schedule, or ask me to start a focus session! 🎙️"
     }
   ]);
   const [input, setInput] = useState('');
@@ -49,14 +48,14 @@ export const AIChatPage = () => {
 
   const conversation = useConversation({
     onConnect: () => {
-      console.log('[ElevenLabs] Agent session connected:', agentId);
+      console.log('[ElevenLabs] Connected to agent:', agentId);
       setErrorMsg(null);
     },
     onDisconnect: () => {
-      console.log('[ElevenLabs] Agent session disconnected');
+      console.log('[ElevenLabs] Disconnected from agent');
     },
     onMessage: (msg) => {
-      console.log('[ElevenLabs] Message received:', msg);
+      console.log('[ElevenLabs] Message event:', msg);
       if (msg && msg.message) {
         setMessages((prev) => [
           ...prev,
@@ -155,7 +154,7 @@ export const AIChatPage = () => {
       }
 
       await conversation.startSession({ agentId });
-      showToast('Connected to ElevenLabs Voice Agent 🎙️', 'success');
+      showToast('Connected to NOVA Voice Agent 🎙️', 'success');
     } catch (err) {
       console.error('Session start failed:', err);
       const msg = 'Microphone permission denied or connection issue: ' + (err.message || '');
@@ -167,7 +166,7 @@ export const AIChatPage = () => {
   const handleEndSession = async () => {
     if (conversation.status === 'connected' || conversation.status === 'connecting') {
       await conversation.endSession();
-      showToast('Voice session ended', 'info');
+      showToast('Voice session disconnected', 'info');
     }
   };
 
@@ -184,28 +183,26 @@ export const AIChatPage = () => {
       try {
         await conversation.sendUserMessage(userMsg);
       } catch (err) {
-        console.error('Failed to send text to ElevenLabs conversation:', err);
+        console.error('Failed to send message to ElevenLabs:', err);
       }
     } else {
-      // Auto-connect and then send or notify
-      showToast('Connecting to voice agent to send your query...', 'info');
+      // Send message to text AI endpoint as seamless fallback
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach((track) => track.stop());
-        await conversation.startSession({ agentId });
-        setTimeout(() => {
-          conversation.sendUserMessage(userMsg);
-        }, 800);
+        const res = await api.post('/ai/chat', { message: userMsg });
+        if (res.data && res.data.response) {
+          setMessages((prev) => [...prev, { source: 'ai', text: res.data.response }]);
+          refreshAll();
+        }
       } catch (err) {
         setMessages((prev) => [
           ...prev,
-          { source: 'ai', text: "Please click 'Start Voice Session' to enable live conversation." }
+          { source: 'ai', text: "Main aapki query process kar raha hoon. Voice start karne ke liye 'Connect Voice' click karein!" }
         ]);
       }
     }
   };
 
-  // Determine current voice visual state
+  // Determine visual agent state
   let currentVoiceState = VOICE_STATES.DISCONNECTED;
   if (errorMsg) {
     currentVoiceState = VOICE_STATES.ERROR;
@@ -224,225 +221,203 @@ export const AIChatPage = () => {
   }
 
   const quickPrompts = [
-    { title: "Kaisa ho? Aaj ka kya plan hai?", desc: "Ask in Hindi / Hinglish", icon: Globe, color: "var(--accent-indigo)" },
-    { title: "What are my tasks for today?", desc: "Task & Schedule check", icon: CheckCircle2, color: "var(--accent-cyan)" },
-    { title: "Add Maths revision at 8 PM", desc: "Voice Command", icon: Mic, color: "var(--accent-emerald)" },
-    { title: "Start 25 min focus timer", desc: "Pomodoro session", icon: Volume2, color: "var(--accent-amber)" },
+    { title: "Aaj ka schedule kya hai?", desc: "Check Timetable", icon: Clock, color: "var(--accent-cyan)" },
+    { title: "Mere pending tasks dikhao", desc: "View Tasks", icon: CheckCircle2, color: "var(--accent-indigo)" },
+    { title: "Maths assignment task add karo", desc: "Voice Command", icon: Mic, color: "var(--accent-emerald)" },
+    { title: "25 min focus timer start karo", desc: "Pomodoro Focus", icon: Flame, color: "var(--accent-amber)" },
   ];
 
   return (
-    <div style={{
+    <div className="page-fade-in" style={{
       display: 'flex',
       flexDirection: 'column',
-      minHeight: 'calc(100vh - 80px)',
-      position: 'relative',
-      overflow: 'hidden',
-      borderRadius: 'var(--radius-lg)',
-      background: 'var(--bg-primary)'
+      gap: '1.5rem',
+      paddingBottom: '2rem'
     }}>
-
-      {/* Background AI Overlay */}
+      {/* Header Banner */}
       <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: 'url("/assets/nova-assistant.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        opacity: 0.35,
-        zIndex: 0,
-        filter: 'brightness(0.7) contrast(1.2)'
-      }} />
-
-      {/* Gradient Overlay */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(135deg, rgba(11, 15, 23, 0.96) 0%, rgba(15, 23, 42, 0.92) 50%, rgba(11, 15, 23, 0.96) 100%)',
-        zIndex: 1
-      }} />
-
-      {/* Main Content Area */}
-      <div style={{
-        position: 'relative',
-        zIndex: 10,
         display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        padding: '1.75rem',
-        gap: '1.5rem'
+        alignItems: 'center',
+        justify: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        padding: '1.5rem',
+        background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(124, 92, 255, 0.08))',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid rgba(14, 165, 233, 0.2)'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem' }}>
+            <span className="badge badge-cyan">
+              <Radio size={12} style={{ animation: 'pulseGreen 1.5s infinite' }} /> ElevenLabs Agent {agentId.slice(0, 12)}...
+            </span>
+            <span className="badge badge-purple">
+              <Globe size={12} /> Hindi / Hinglish / English
+            </span>
+          </div>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: 0, fontFamily: 'var(--font-heading)' }}>
+            NOVA AI Voice & Study Assistant
+          </h1>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {conversation.status === 'connected' ? (
+            <button
+              onClick={handleEndSession}
+              className="btn btn-danger"
+              style={{ borderRadius: 'var(--radius-full)', padding: '0.6rem 1.25rem' }}
+            >
+              <MicOff size={16} /> Disconnect Voice
+            </button>
+          ) : (
+            <button
+              onClick={handleStartSession}
+              className="btn btn-primary"
+              style={{ borderRadius: 'var(--radius-full)', padding: '0.6rem 1.35rem' }}
+            >
+              <Mic size={16} /> Connect Voice Agent 🎙️
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Dual Panel Layout: Left Assistant Visual + Right Conversation Stream */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+        gap: '1.5rem',
+        alignItems: 'stretch'
       }}>
 
-        {/* Top Header Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
+        {/* Left Panel: NOVA Visual & Voice Orb Visualizer */}
+        <div className="glass-panel" style={{
+          position: 'relative',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justify: 'center',
+          padding: '2rem 1.5rem',
+          minHeight: '440px',
+          background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(8, 12, 25, 0.95) 100%)'
+        }}>
+          {/* Background Assistant Mesh Image */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'url("/assets/nova-assistant.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.18,
+            filter: 'brightness(0.5)',
+            pointerEvents: 'none'
+          }} />
 
-          {/* Left Greeting */}
-          <div style={{ maxWidth: '460px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <div style={{
-                width: '42px', height: '42px', borderRadius: '50%',
-                background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)'
-              }}>
-                <Sparkles size={22} color="#fff" />
-              </div>
-              <div>
-                <span className="badge badge-cyan" style={{ fontSize: '0.75rem' }}>
-                  <Radio size={12} style={{ animation: 'pulse 1.5s infinite' }} /> ElevenLabs Agent {agentId.slice(0, 10)}...
-                </span>
-              </div>
+          <div style={{ position: 'relative', zIndex: 10, width: '100%' }}>
+            {/* Visualizer Orb */}
+            <AudioVisualizer state={currentVoiceState} errorMsg={errorMsg} />
+
+            {/* Quick Intent Pills */}
+            <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
+              {quickPrompts.map((p, idx) => {
+                const Icon = p.icon;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSendText(p.title)}
+                    className="glass-panel-interactive"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.65rem',
+                      padding: '0.65rem 0.85rem',
+                      background: 'rgba(30, 41, 59, 0.6)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: 'var(--radius-md)',
+                      cursor: 'pointer',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <Icon size={16} color={p.color} style={{ flexShrink: 0 }} />
+                    <div>
+                      <div style={{ color: '#fff', fontSize: '0.775rem', fontWeight: 600 }}>{p.title}</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.675rem' }}>{p.desc}</div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-
-            <h1 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', lineHeight: 1.15, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
-              NOVA Voice Assistant
-            </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', fontWeight: 400 }}>
-              Speak naturally in <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>Hindi, Hinglish, English, Bhojpuri, Tamil, Telugu</span> or any language.
-            </p>
-          </div>
-
-          {/* Right Quick Prompts */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', maxWidth: '520px' }}>
-            {quickPrompts.map((p, idx) => {
-              const Icon = p.icon;
-              return (
-                <div key={idx}
-                  onClick={() => handleSendText(p.title)}
-                  className="glass-panel-interactive"
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '0.75rem',
-                    padding: '0.65rem 1rem', borderRadius: 'var(--radius-md)',
-                    background: 'rgba(30, 41, 59, 0.65)',
-                    backdropFilter: 'blur(24px)', border: '1px solid rgba(255, 255, 255, 0.1)',
-                    cursor: 'pointer', flex: '1 1 220px', transition: 'all 0.2s ease'
-                  }}>
-                  <div style={{
-                    width: '32px', height: '32px', borderRadius: '8px',
-                    background: p.color, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: `0 4px 15px ${p.color}40`, flexShrink: 0
-                  }}>
-                    <Icon size={16} color="#fff" />
-                  </div>
-                  <div>
-                    <h4 style={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>{p.title}</h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{p.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
           </div>
         </div>
 
-        {/* Embedded ElevenLabs Voice Assistant Panel */}
-        <div style={{
-          flex: 1,
+        {/* Right Panel: Conversation Stream & Input Form */}
+        <div className="glass-panel" style={{
           display: 'flex',
           flexDirection: 'column',
-          background: 'rgba(15, 23, 42, 0.85)',
-          backdropFilter: 'blur(32px)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          borderRadius: 'var(--radius-lg)',
-          overflow: 'hidden',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
-          margin: '0 auto',
-          width: '100%',
-          maxWidth: '960px'
+          height: '520px',
+          overflow: 'hidden'
         }}>
-
-          {/* Panel Top Status & Controls Bar */}
+          {/* Transcript Top Bar */}
           <div style={{
+            padding: '1rem 1.25rem',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justify: 'space-between',
-            padding: '1rem 1.5rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(30, 41, 59, 0.4)'
+            background: 'rgba(15, 23, 42, 0.6)'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Bot size={22} color="var(--accent-cyan)" />
-              <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', margin: 0 }}>
-                  NOVA Conversational Agent
-                </h3>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  Powered by ElevenLabs Agent: <code style={{ color: 'var(--accent-cyan-light)', background: 'rgba(14, 165, 233, 0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{agentId}</code>
-                </span>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <Bot size={18} color="var(--accent-cyan)" />
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>
+                Live Transcript
+              </h3>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              {conversation.status === 'connected' ? (
-                <button
-                  onClick={handleEndSession}
-                  className="btn btn-danger"
-                  style={{ borderRadius: 'var(--radius-full)', padding: '0.5rem 1.1rem', fontSize: '0.85rem' }}
-                >
-                  <MicOff size={16} /> Disconnect
-                </button>
-              ) : (
-                <button
-                  onClick={handleStartSession}
-                  className="btn btn-primary"
-                  style={{ borderRadius: 'var(--radius-full)', padding: '0.5rem 1.25rem', fontSize: '0.85rem' }}
-                >
-                  <Mic size={16} /> Start Voice Session 🎙️
-                </button>
-              )}
-            </div>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              {messages.length} message(s)
+            </span>
           </div>
 
-          {/* Interactive Voice Visualizer Center */}
-          <div style={{
-            padding: '1.25rem 1.5rem',
-            background: 'rgba(11, 15, 23, 0.4)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)'
-          }}>
-            <AudioVisualizer state={currentVoiceState} errorMsg={errorMsg} />
-          </div>
-
-          {/* Live Multilingual Conversation Stream */}
+          {/* Messages Stream */}
           <div style={{
             flex: 1,
-            minHeight: '220px',
-            maxHeight: '340px',
             overflowY: 'auto',
-            padding: '1.25rem 1.5rem',
+            padding: '1.25rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.85rem'
+            gap: '1rem'
           }}>
             {messages.map((m, idx) => (
               <div
                 key={idx}
                 style={{
                   alignSelf: m.source === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '80%',
+                  maxWidth: '85%',
                   display: 'flex',
                   flexDirection: 'column'
                 }}
               >
                 <div style={{
-                  fontSize: '0.7rem',
+                  fontSize: '0.675rem',
                   color: 'var(--text-muted)',
                   marginBottom: '0.25rem',
                   alignSelf: m.source === 'user' ? 'flex-end' : 'flex-start',
                   fontWeight: 600,
                   textTransform: 'uppercase'
                 }}>
-                  {m.source === 'user' ? 'You' : 'Nova Agent'}
+                  {m.source === 'user' ? (user?.name || 'You') : 'NOVA AI'}
                 </div>
                 <div style={{
                   background: m.source === 'user'
-                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.2))'
-                    : 'rgba(30, 41, 59, 0.6)',
+                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(14, 165, 233, 0.25))'
+                    : 'rgba(30, 41, 59, 0.65)',
                   backdropFilter: 'blur(16px)',
                   border: m.source === 'user' ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
                   padding: '0.85rem 1.15rem',
                   borderRadius: m.source === 'user' ? '1.15rem 1.15rem 0 1.15rem' : '1.15rem 1.15rem 1.15rem 0',
                   color: '#fff',
-                  fontSize: '0.95rem',
+                  fontSize: '0.9rem',
                   lineHeight: 1.5,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
                 }}>
                   {m.text}
                 </div>
@@ -451,36 +426,35 @@ export const AIChatPage = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Integrated Message Form Input */}
+          {/* Form Input */}
           <div style={{
-            padding: '1rem 1.5rem',
-            background: 'rgba(30, 41, 59, 0.5)',
+            padding: '0.85rem 1rem',
+            background: 'rgba(15, 23, 42, 0.8)',
             borderTop: '1px solid rgba(255, 255, 255, 0.08)'
           }}>
             <form
               onSubmit={(e) => { e.preventDefault(); handleSendText(); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}
             >
               <input
                 type="text"
                 className="form-input"
-                placeholder={conversation.status === 'connected' ? "Type a message or speak into your mic in Hindi/English..." : "Type your query or click 'Start Voice Session'..."}
+                placeholder={conversation.status === 'connected' ? "Ask NOVA anything in Hindi/English..." : "Type your query or click Connect Voice..."}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                style={{ flex: 1, background: 'rgba(15, 23, 42, 0.7)', fontSize: '0.95rem' }}
+                style={{ flex: 1, background: 'rgba(8, 12, 25, 0.8)', fontSize: '0.9rem' }}
               />
 
               <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={!input.trim()}
-                style={{ padding: '0.65rem 1.25rem', borderRadius: 'var(--radius-md)' }}
+                style={{ padding: '0.65rem 1.1rem' }}
               >
-                <Send size={16} /> Send
+                <Send size={16} />
               </button>
             </form>
           </div>
-
         </div>
 
       </div>

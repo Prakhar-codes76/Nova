@@ -1,107 +1,87 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   CheckSquare, 
   Calendar, 
-  BrainCircuit, 
+  Sparkles, 
   Timer, 
   BarChart3, 
   User, 
-  Mic, 
   MessageSquare,
-  Sparkles,
   Bell,
   Settings,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const Sidebar = ({ isOpen, onClose }) => {
-  const { setIsVoiceOpen } = useApp();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const navItems = [
+  const mainNavItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/tasks', label: 'My Tasks', icon: CheckSquare },
+    { path: '/tasks', label: 'Tasks', icon: CheckSquare },
     { path: '/timetable', label: 'Timetable', icon: Calendar },
-    { path: '/study-planner', label: 'AI Planner', icon: BrainCircuit },
-    { path: '/assistant', label: 'NOVA Assistant', icon: MessageSquare },
     { path: '/focus', label: 'Focus Mode', icon: Timer },
     { path: '/progress', label: 'Analytics & Progress', icon: BarChart3 },
+    { path: '/assistant', label: 'AI Assistant', icon: MessageSquare },
+  ];
+
+  const bottomNavItems = [
     { path: '/notifications', label: 'Notifications', icon: Bell },
     { path: '/profile', label: 'Profile', icon: User },
     { path: '/settings', label: 'Settings', icon: Settings },
   ];
 
-  const sidebarStyle = {
-    width: '260px',
-    background: 'rgba(15, 23, 42, 0.98)',
-    borderRight: '1px solid var(--border-color)',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '1.25rem 1rem',
-    gap: '1.25rem',
-    flexShrink: 0,
-    zIndex: 100,
-    maxHeight: '100vh',
-    overflowY: 'auto'
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
-    <aside className={`sidebar-container ${isOpen ? 'mobile-open' : ''}`} style={sidebarStyle}>
+    <aside className={`sidebar-container ${isOpen ? 'mobile-open' : ''}`}>
       {/* Brand Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.5rem', marginBottom: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <img 
-            src="/assets/nova-logo.jpg" 
-            alt="NOVA Logo" 
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              objectFit: 'cover',
-              border: '1px solid rgba(14, 165, 233, 0.4)',
-              boxShadow: '0 0 15px rgba(14, 165, 233, 0.4)'
-            }}
-          />
+          <div style={{ position: 'relative' }}>
+            <img 
+              src="/assets/nova-logo.jpg" 
+              alt="NOVA Logo" 
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '12px',
+                objectFit: 'cover',
+                border: '1.5px solid rgba(14, 165, 233, 0.5)',
+                boxShadow: '0 0 15px rgba(14, 165, 233, 0.4), 0 0 30px rgba(99, 102, 241, 0.2)'
+              }}
+            />
+          </div>
           <div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>NOVA</h2>
-            <span style={{ fontSize: '0.675rem', color: 'var(--accent-cyan-light)', fontWeight: 600, letterSpacing: '0.06em' }}>
-              STUDENT ASSISTANT
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', lineHeight: 1, fontFamily: 'var(--font-heading)', letterSpacing: '-0.01em' }}>
+              NOVA
+            </h2>
+            <span style={{ fontSize: '0.65rem', color: 'var(--accent-cyan-light)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              Student Life Assistant
             </span>
           </div>
         </div>
 
         {onClose && (
-          <button onClick={onClose} className="mobile-close-btn" style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}>
             <X size={20} />
           </button>
         )}
       </div>
 
-      {/* Voice Assistant Trigger */}
-      <button 
-        onClick={() => {
-          setIsVoiceOpen(true);
-          if (onClose) onClose();
-        }}
-        className="btn btn-primary" 
-        style={{
-          width: '100%',
-          borderRadius: 'var(--radius-full)',
-          padding: '0.65rem',
-          fontSize: '0.85rem',
-          background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
-          boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)'
-        }}
-      >
-        <Mic size={16} />
-        Talk to Nova 🎙️
-      </button>
-
-      {/* Navigation */}
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
-        {navItems.map((item) => {
+      {/* Main Navigation Group */}
+      <div style={{ fontSize: '0.675rem', fontWeight: 700, color: '#64748b', letterSpacing: '0.08em', paddingLeft: '0.75rem', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+        Main Workspace
+      </div>
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+        {mainNavItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
@@ -113,23 +93,124 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                padding: '0.6rem 0.85rem',
-                borderRadius: 'var(--radius-sm)',
+                padding: '0.65rem 0.85rem',
+                borderRadius: 'var(--radius-md)',
                 color: isActive ? '#fff' : 'var(--text-muted)',
-                background: isActive ? 'rgba(14, 165, 233, 0.15)' : 'transparent',
+                background: isActive ? 'linear-gradient(90deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.08))' : 'transparent',
                 borderLeft: isActive ? '3px solid var(--accent-cyan)' : '3px solid transparent',
                 textDecoration: 'none',
                 fontWeight: isActive ? 600 : 500,
-                fontSize: '0.85rem',
-                transition: 'all 0.15s ease'
+                fontSize: '0.875rem',
+                transition: 'all 0.2s ease',
+                boxShadow: isActive ? '0 4px 20px rgba(14, 165, 233, 0.15)' : 'none'
               })}
             >
-              <Icon size={17} />
+              <Icon size={18} color={item.path === '/assistant' ? 'var(--accent-cyan-light)' : 'currentColor'} />
+              <span>{item.label}</span>
+              {item.path === '/assistant' && (
+                <span className="badge badge-cyan" style={{ marginLeft: 'auto', fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>
+                  AI 🎙️
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
+      </nav>
+
+      {/* Divider */}
+      <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.06)', margin: '0.5rem 0' }} />
+
+      {/* Account & Settings Group */}
+      <div style={{ fontSize: '0.675rem', fontWeight: 700, color: '#64748b', letterSpacing: '0.08em', paddingLeft: '0.75rem', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+        Account & System
+      </div>
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
+        {bottomNavItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={onClose}
+              style={({ isActive }) => ({
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.65rem 0.85rem',
+                borderRadius: 'var(--radius-md)',
+                color: isActive ? '#fff' : 'var(--text-muted)',
+                background: isActive ? 'rgba(124, 92, 255, 0.15)' : 'transparent',
+                borderLeft: isActive ? '3px solid var(--accent-purple)' : '3px solid transparent',
+                textDecoration: 'none',
+                fontWeight: isActive ? 600 : 500,
+                fontSize: '0.875rem',
+                transition: 'all 0.2s ease'
+              })}
+            >
+              <Icon size={18} />
               <span>{item.label}</span>
             </NavLink>
           );
         })}
       </nav>
+
+      {/* User Profile Card at Bottom */}
+      <div style={{
+        marginTop: 'auto',
+        background: 'rgba(15, 23, 42, 0.7)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 'var(--radius-md)',
+        padding: '0.75rem',
+        display: 'flex',
+        alignItems: 'center',
+        justify: 'space-between',
+        gap: '0.5rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', overflow: 'hidden' }}>
+          <div style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo))',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            color: '#fff',
+            flexShrink: 0
+          }}>
+            {user?.name ? user.name.charAt(0).toUpperCase() : 'N'}
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {user?.name || 'Student'}
+            </h4>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {user?.course || user?.college || 'B.Tech CSE'}
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleLogout}
+          title="Log out"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#94a3b8',
+            cursor: 'pointer',
+            padding: '4px',
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#f43f5e'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}
+        >
+          <LogOut size={17} />
+        </button>
+      </div>
     </aside>
   );
 };
