@@ -14,17 +14,40 @@ export const DashboardPage = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingBottom: '2rem' }}>
+      {/* Top Section */}
       <HeaderGreeting />
       <NovaSuggestionWidget />
+      
+      {/* Main KPI Cards */}
       <OverviewCards />
-      <NextActivityCard />
-      <QuickActions
-        onOpenAddTask={() => setIsTaskModalOpen(true)}
-        onOpenAddSchedule={() => setIsScheduleModalOpen(true)}
-      />
-      <TodayTasks />
-      <ProductivityChart />
+
+      {/* Main Grid Layout for the rest of the dashboard */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+        gap: '1.5rem',
+        alignItems: 'start'
+      }}>
+        {/* Left Column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <NextActivityCard />
+          <QuickActions
+            onOpenAddTask={() => setIsTaskModalOpen(true)}
+            onOpenAddSchedule={() => setIsScheduleModalOpen(true)}
+          />
+        </div>
+
+        {/* Right Column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <TodayTasks />
+        </div>
+      </div>
+
+      {/* Full width chart at the bottom */}
+      <div style={{ marginTop: '0.5rem' }}>
+        <ProductivityChart />
+      </div>
 
       <AddTaskModal
         isOpen={isTaskModalOpen}

@@ -10,7 +10,8 @@ import {
   Award, 
   Calendar,
   Sparkles,
-  Info
+  Info,
+  Zap
 } from 'lucide-react';
 import api from '../services/api';
 
