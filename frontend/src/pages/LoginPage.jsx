@@ -39,134 +39,68 @@ export const LoginPage = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      background: 'var(--bg-primary)',
-      color: 'var(--text-main)',
-      overflow: 'hidden'
-    }} className="login-split-container">
-
-      {/* LEFT SIDE: Original Fictional NOVA AI Visual */}
-      <div style={{
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '3rem',
-        background: 'radial-gradient(circle at 40% 40%, rgba(14, 165, 233, 0.15) 0%, rgba(15, 23, 42, 0.95) 70%)',
-        borderRight: '1px solid var(--border-color)',
-        overflow: 'hidden'
-      }}>
-        {/* Floating Particles */}
-        <div className="particle-container">
-          <div className="particle" style={{ left: '20%', animationDuration: '7s' }} />
-          <div className="particle" style={{ left: '50%', animationDuration: '10s' }} />
-          <div className="particle" style={{ left: '80%', animationDuration: '6s' }} />
-        </div>
-
-        {/* Fictional NOVA AI Avatar Graphic */}
-        <div style={{ position: 'relative', width: '220px', height: '220px', marginBottom: '2.5rem' }} className="nova-avatar-container">
-          <div className="nova-avatar-ring ring-idle" style={{ inset: '-25px' }} />
-          <div className="nova-avatar-ring ring-speaking" style={{ inset: '-10px' }} />
-          
-          <div style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #0f172a, #1e293b)',
-            border: '2px solid var(--accent-cyan)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 35px rgba(14, 165, 233, 0.35)',
-            position: 'relative',
-            zIndex: 5
-          }}>
-            <Bot size={96} color="var(--accent-cyan-light)" />
-          </div>
-        </div>
-
-        {/* Brand & Text Content */}
-        <div style={{ textAlign: 'center', zIndex: 10, maxWidth: '400px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.3rem 0.85rem',
-            background: 'rgba(14, 165, 233, 0.1)',
-            border: '1px solid rgba(14, 165, 233, 0.25)',
-            borderRadius: 'var(--radius-full)',
-            fontSize: '0.8rem',
-            fontWeight: 700,
-            color: 'var(--accent-cyan-light)',
-            marginBottom: '1rem',
-            letterSpacing: '0.08em'
-          }}>
-            <Sparkles size={14} /> NOVA
+    <div className="login-split-container">
+      {/* LEFT SIDE: Premium Branding */}
+      <div className="login-brand-side">
+        <div className="brand-mesh-1"></div>
+        <div className="brand-mesh-2"></div>
+        
+        <div className="brand-content-wrapper">
+          <div className="brand-logo-pill">
+            <Sparkles size={14} /> <span>NOVA OS</span>
           </div>
 
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#fff', marginBottom: '0.5rem' }}>
-            Your AI-Powered Student Life Companion
+          <h1 className="brand-hero-text">
+            Master your<br/>academic life.
           </h1>
-
-          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.6 }}>
-            "Plan smarter. Focus better. Achieve more."
+          <p className="brand-sub-text">
+            Your intelligent student workspace. Organize tasks, optimize your schedule, and enter deep focus effortlessly.
           </p>
 
-          <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', marginTop: '2rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <CheckCircle2 size={16} color="var(--accent-emerald)" /> Smart Timetable
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <CheckCircle2 size={16} color="var(--accent-emerald)" /> Focus Pomodoro
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <CheckCircle2 size={16} color="var(--accent-emerald)" /> Voice Assistant
-            </span>
+          <div className="brand-feature-list">
+            <div className="feature-item">
+              <div className="feature-icon-wrapper cyan">
+                <CheckCircle2 size={20} />
+              </div>
+              <div className="feature-text">
+                <h4>Smart Organization</h4>
+                <p>Unified dashboard for tasks and classes.</p>
+              </div>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon-wrapper emerald">
+                <Bot size={20} />
+              </div>
+              <div className="feature-text">
+                <h4>AI Companion</h4>
+                <p>Voice-enabled study assistant at your command.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* RIGHT SIDE: Welcome Back Login Form */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '3rem 2rem',
-        background: 'var(--bg-primary)'
-      }}>
-        <div style={{ maxWidth: '400px', width: '100%' }}>
-          <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#fff' }}>Welcome Back</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
-              Log in to access your Nova student dashboard.
-            </p>
+      <div className="login-form-side">
+        <div className="login-form-wrapper">
+          <div className="login-header">
+            <h2>Welcome Back</h2>
+            <p>Log in to access your Nova workspace.</p>
           </div>
 
           {error && (
-            <div style={{
-              padding: '0.75rem 1rem',
-              background: 'rgba(244, 63, 94, 0.12)',
-              border: '1px solid rgba(244, 63, 94, 0.3)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--accent-rose)',
-              fontSize: '0.85rem',
-              marginBottom: '1.25rem'
-            }}>
+            <div className="alert-error">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="auth-form">
             <div className="input-group">
               <label className="input-label">Email or Username</label>
               <input
                 type="email"
                 className="form-input"
-                placeholder="e.g. student@college.edu"
+                placeholder="student@college.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -174,15 +108,15 @@ export const LoginPage = () => {
             </div>
 
             <div className="input-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="input-label-row">
                 <label className="input-label">Password</label>
                 <a
                   href="#forgot"
                   onClick={(e) => {
                     e.preventDefault();
-                    showToast('Password reset link sent to your registered email.', 'info');
+                    showToast('Password reset link sent.', 'info');
                   }}
-                  style={{ fontSize: '0.775rem', color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 500 }}
+                  className="forgot-link"
                 >
                   Forgot Password?
                 </a>
@@ -209,30 +143,21 @@ export const LoginPage = () => {
 
             <button
               type="submit"
-              className="btn btn-primary"
-              style={{ width: '100%', marginTop: '1.25rem', padding: '0.75rem' }}
+              className="btn btn-primary login-submit-btn"
               disabled={loading}
             >
               {loading ? 'Authenticating...' : 'Sign In'} <ArrowRight size={18} />
             </button>
           </form>
 
-          <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          <div className="login-footer">
             Don't have an account?{' '}
-            <Link to="/register" style={{ color: 'var(--accent-cyan)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link to="/register" className="register-link">
               Create Account
             </Link>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 850px) {
-          .login-split-container {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };
