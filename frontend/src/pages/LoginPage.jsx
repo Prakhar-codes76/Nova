@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Sparkles, ShieldCheck } from 'lucide-react';
 
-// SVG Icons for social login
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.67 15.63 16.89 16.78 15.73 17.56V20.31H19.29C21.37 18.39 22.56 15.57 22.56 12.25Z" fill="#4285F4"/>
@@ -56,20 +55,50 @@ export const LoginPage = () => {
 
   return (
     <div className="login-page-container">
-      {/* Blurred background image layer */}
+      {/* Cinematic Background Layer */}
       <div 
         className="login-background-mesh"
-        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1633511119567-96a93b482260?q=80&w=2000&auto=format&fit=crop")' }}
-      ></div>
+        style={{ backgroundImage: 'url("/assets/nova-login.jpg")' }}
+      />
 
-      <div className="login-glass-card">
+      {/* Dark Purple/Blue Ambient Overlay & Particle glow */}
+      <div className="vfx-radial-overlay" />
+      <div className="vfx-particle particle-1" />
+      <div className="vfx-particle particle-2" />
+      <div className="vfx-particle particle-3" />
+
+      {/* Glassmorphism Login Card */}
+      <div className="login-glass-card page-fade-in">
         <div className="login-logo-container">
-          <div className="nova-logo-glow">
-            <div className="nova-logo-glow-inner">
-              <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'linear-gradient(135deg, #0ea5e9, #6366f1)' }}></div>
-            </div>
+          <div className="nova-logo-glow" style={{ position: 'relative' }}>
+            <img 
+              src="/assets/nova-logo.jpg" 
+              alt="NOVA Logo" 
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '2px solid rgba(14, 165, 233, 0.5)',
+                boxShadow: '0 0 25px rgba(14, 165, 233, 0.5), 0 0 45px rgba(99, 102, 241, 0.4)'
+              }}
+            />
           </div>
-          <h2>Welcome Back</h2>
+          <h2 style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '1.8rem',
+            fontWeight: 800,
+            background: 'linear-gradient(135deg, #ffffff 0%, var(--accent-cyan-light) 50%, var(--accent-indigo) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '-0.02em',
+            marginTop: '0.5rem'
+          }}>
+            Welcome to NOVA
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+            Next-Gen AI Student Life Assistant
+          </p>
         </div>
 
         {error && (
@@ -128,6 +157,14 @@ export const LoginPage = () => {
             type="submit"
             className="btn btn-primary login-submit-btn"
             disabled={loading}
+            style={{
+              background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+              boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
+              borderRadius: 'var(--radius-md)',
+              padding: '0.85rem',
+              fontSize: '1rem',
+              fontWeight: 700
+            }}
           >
             {loading ? 'Logging in...' : 'Log in'}
           </button>
@@ -156,7 +193,7 @@ export const LoginPage = () => {
 
       <div className="support-button-container">
         <button className="support-btn" onClick={() => showToast('Support chat coming soon', 'info')}>
-          <div className="support-avatar"></div>
+          <div className="support-avatar" />
           Support
         </button>
       </div>
@@ -164,3 +201,4 @@ export const LoginPage = () => {
   );
 };
 
+export default LoginPage;

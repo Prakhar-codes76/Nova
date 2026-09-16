@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
-import { 
-  Sparkles, 
-  Mic, 
-  MicOff, 
-  Send, 
-  Compass, 
-  CheckCircle2, 
-  Volume2, 
-  ArrowUp, 
-  RefreshCw, 
-  Globe, 
-  Bot, 
-  Radio, 
+import {
+  Sparkles,
+  Mic,
+  MicOff,
+  Send,
+  Compass,
+  CheckCircle2,
+  Volume2,
+  ArrowUp,
+  RefreshCw,
+  Globe,
+  Bot,
+  Radio,
   ShieldCheck,
   VolumeX
 } from 'lucide-react';
@@ -25,7 +25,7 @@ import api from '../services/api';
 export const AIChatPage = () => {
   const { refreshAll, showToast } = useApp();
   const { user } = useAuth();
-  
+
   const [errorMsg, setErrorMsg] = useState(null);
   const [messages, setMessages] = useState([
     {
@@ -240,18 +240,17 @@ export const AIChatPage = () => {
       borderRadius: 'var(--radius-lg)',
       background: 'var(--bg-primary)'
     }}>
-      
+
       {/* Background AI Overlay */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: 'url("https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop")',
+        backgroundImage: 'url("/assets/nova-assistant.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        opacity: 0.25,
+        opacity: 0.35,
         zIndex: 0,
-        filter: 'brightness(0.6) contrast(1.2)',
-        mixBlendMode: 'luminosity'
+        filter: 'brightness(0.7) contrast(1.2)'
       }} />
 
       {/* Gradient Overlay */}
@@ -272,10 +271,10 @@ export const AIChatPage = () => {
         padding: '1.75rem',
         gap: '1.5rem'
       }}>
-        
+
         {/* Top Header Section */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-          
+
           {/* Left Greeting */}
           <div style={{ maxWidth: '460px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
@@ -293,7 +292,7 @@ export const AIChatPage = () => {
                 </span>
               </div>
             </div>
-            
+
             <h1 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', lineHeight: 1.15, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
               NOVA Voice Assistant
             </h1>
@@ -307,7 +306,7 @@ export const AIChatPage = () => {
             {quickPrompts.map((p, idx) => {
               const Icon = p.icon;
               return (
-                <div key={idx} 
+                <div key={idx}
                   onClick={() => handleSendText(p.title)}
                   className="glass-panel-interactive"
                   style={{
@@ -349,7 +348,7 @@ export const AIChatPage = () => {
           width: '100%',
           maxWidth: '960px'
         }}>
-          
+
           {/* Panel Top Status & Controls Bar */}
           <div style={{
             display: 'flex',
@@ -433,8 +432,8 @@ export const AIChatPage = () => {
                   {m.source === 'user' ? 'You' : 'Nova Agent'}
                 </div>
                 <div style={{
-                  background: m.source === 'user' 
-                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.2))' 
+                  background: m.source === 'user'
+                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.2))'
                     : 'rgba(30, 41, 59, 0.6)',
                   backdropFilter: 'blur(16px)',
                   border: m.source === 'user' ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
@@ -458,8 +457,8 @@ export const AIChatPage = () => {
             background: 'rgba(30, 41, 59, 0.5)',
             borderTop: '1px solid rgba(255, 255, 255, 0.08)'
           }}>
-            <form 
-              onSubmit={(e) => { e.preventDefault(); handleSendText(); }} 
+            <form
+              onSubmit={(e) => { e.preventDefault(); handleSendText(); }}
               style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
             >
               <input
@@ -470,9 +469,9 @@ export const AIChatPage = () => {
                 onChange={(e) => setInput(e.target.value)}
                 style={{ flex: 1, background: 'rgba(15, 23, 42, 0.7)', fontSize: '0.95rem' }}
               />
-              
-              <button 
-                type="submit" 
+
+              <button
+                type="submit"
                 className="btn btn-primary"
                 disabled={!input.trim()}
                 style={{ padding: '0.65rem 1.25rem', borderRadius: 'var(--radius-md)' }}
