@@ -22,3 +22,5 @@ class User(Base):
     timetable_entries = relationship("Timetable", back_populates="user", cascade="all, delete-orphan")
     focus_sessions = relationship("FocusSession", back_populates="user", cascade="all, delete-orphan")
     study_sessions = relationship("StudySession", back_populates="user", cascade="all, delete-orphan")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+

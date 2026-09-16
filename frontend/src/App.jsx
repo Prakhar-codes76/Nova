@@ -22,7 +22,9 @@ import { AIChatPage } from './pages/AIChatPage';
 import { StudyPlannerPage } from './pages/StudyPlannerPage';
 import { FocusPage } from './pages/FocusPage';
 import { ProgressPage } from './pages/ProgressPage';
+import { NotificationsPage } from './pages/NotificationsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { SettingsPage } from './pages/SettingsPage';
 
 function ProtectedLayout() {
   const { isAuthenticated, loading } = useAuth();
@@ -30,7 +32,7 @@ function ProtectedLayout() {
 
   if (loading) {
     return (
-      <div className="cinematic-bg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#fff' }}>
+      <div className="app-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#fff' }}>
         <div style={{ textAlign: 'center' }}>
           <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Loading Nova...</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Authenticating user context</p>
@@ -62,7 +64,10 @@ function ProtectedLayout() {
           <Route path="/study-planner" element={<StudyPlannerPage />} />
           <Route path="/focus" element={<FocusPage />} />
           <Route path="/progress" element={<ProgressPage />} />
+          <Route path="/analytics" element={<ProgressPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
@@ -103,4 +108,3 @@ export function App() {
 }
 
 export default App;
-

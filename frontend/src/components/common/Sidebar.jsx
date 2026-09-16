@@ -11,6 +11,8 @@ import {
   Mic, 
   MessageSquare,
   Sparkles,
+  Bell,
+  Settings,
   X
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -20,13 +22,15 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/tasks', label: 'Tasks & Routine', icon: CheckSquare },
+    { path: '/tasks', label: 'My Tasks', icon: CheckSquare },
     { path: '/timetable', label: 'Timetable', icon: Calendar },
-    { path: '/ai-chat', label: 'Nova AI Chat', icon: MessageSquare },
-    { path: '/study-planner', label: 'Study Planner', icon: BrainCircuit },
+    { path: '/study-planner', label: 'AI Planner', icon: BrainCircuit },
+    { path: '/ai-chat', label: 'NOVA Assistant', icon: MessageSquare },
     { path: '/focus', label: 'Focus Mode', icon: Timer },
-    { path: '/progress', label: 'Progress Analytics', icon: BarChart3 },
-    { path: '/profile', label: 'Profile Settings', icon: User },
+    { path: '/progress', label: 'Analytics & Progress', icon: BarChart3 },
+    { path: '/notifications', label: 'Notifications', icon: Bell },
+    { path: '/profile', label: 'Profile', icon: User },
+    { path: '/settings', label: 'Settings', icon: Settings },
   ];
 
   const sidebarStyle = {
@@ -36,31 +40,33 @@ export const Sidebar = ({ isOpen, onClose }) => {
     display: 'flex',
     flexDirection: 'column',
     padding: '1.25rem 1rem',
-    gap: '1.5rem',
+    gap: '1.25rem',
     flexShrink: 0,
     zIndex: 100,
+    maxHeight: '100vh',
+    overflowY: 'auto'
   };
 
   return (
     <aside className={`sidebar-container ${isOpen ? 'mobile-open' : ''}`} style={sidebarStyle}>
       {/* Brand Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
-            width: '38px',
-            height: '38px',
+            width: '36px',
+            height: '36px',
             borderRadius: '10px',
-            background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
+            background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 15px rgba(99, 102, 241, 0.5)'
+            boxShadow: '0 0 15px rgba(14, 165, 233, 0.4)'
           }}>
-            <Sparkles size={22} color="#fff" />
+            <Sparkles size={20} color="#fff" />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>NOVA</h2>
-            <span style={{ fontSize: '0.7rem', color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '0.05em' }}>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>NOVA</h2>
+            <span style={{ fontSize: '0.675rem', color: 'var(--accent-cyan-light)', fontWeight: 600, letterSpacing: '0.06em' }}>
               STUDENT ASSISTANT
             </span>
           </div>
@@ -79,15 +85,15 @@ export const Sidebar = ({ isOpen, onClose }) => {
           setIsVoiceOpen(true);
           if (onClose) onClose();
         }}
-        className="btn btn-voice" 
-        style={{ width: '100%', borderRadius: 'var(--radius-md)', padding: '0.75rem', fontSize: '0.9rem' }}
+        className="btn btn-primary" 
+        style={{ width: '100%', borderRadius: 'var(--radius-full)', padding: '0.65rem', fontSize: '0.85rem' }}
       >
-        <Mic size={18} />
+        <Mic size={16} />
         Talk to Nova 🎙️
       </button>
 
       {/* Navigation */}
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -99,19 +105,19 @@ export const Sidebar = ({ isOpen, onClose }) => {
               style={({ isActive }) => ({
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.85rem',
-                padding: '0.7rem 0.9rem',
+                gap: '0.75rem',
+                padding: '0.6rem 0.85rem',
                 borderRadius: 'var(--radius-sm)',
                 color: isActive ? '#fff' : 'var(--text-muted)',
-                background: isActive ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                borderLeft: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent',
+                background: isActive ? 'rgba(14, 165, 233, 0.15)' : 'transparent',
+                borderLeft: isActive ? '3px solid var(--accent-cyan)' : '3px solid transparent',
                 textDecoration: 'none',
                 fontWeight: isActive ? 600 : 500,
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 transition: 'all 0.15s ease'
               })}
             >
-              <Icon size={18} />
+              <Icon size={17} />
               <span>{item.label}</span>
             </NavLink>
           );

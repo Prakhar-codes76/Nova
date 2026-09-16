@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
-import { Search, Menu, UserCheck, LogOut } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Menu, UserCheck, LogOut, Bell, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
 
 export const Navbar = ({ onToggleMobileSidebar }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const res = await api.get('/notifications');
+        const unread = res.data.filter(n => !n.is_read).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        // silent
+      }
+    };
+    fetchUnread();
+  }, []);
 
   const handleSearch = async (e) => {
     const val = e.target.value;
@@ -25,9 +41,12 @@ export const Navbar = ({ onToggleMobileSidebar }) => {
   };
 
   const displayName = user?.name || 'Student';
-  const displayCourse = user?.course || 'Student';
-  const displayYear = user?.year || 'Active';
   const displayCollege = user?.college || 'Nova Academy';
+  const currentDateFormatted = new Date().toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  });
 
   return (
     <header style={{
@@ -58,12 +77,12 @@ export const Navbar = ({ onToggleMobileSidebar }) => {
       </button>
 
       {/* Global Search Bar */}
-      <div style={{ position: 'relative', flex: 1, maxWidth: '380px' }}>
+      <div style={{ position: 'relative', flex: 1, maxWidth: '360px' }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
-          background: 'rgba(17, 24, 39, 0.8)',
+          background: 'rgba(15, 23, 42, 0.8)',
           border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-full)',
           padding: '0.45rem 1rem',
@@ -85,7 +104,7 @@ export const Navbar = ({ onToggleMobileSidebar }) => {
           />
         </div>
 
-        {/* Global Search Results Dropdown */}
+        {/* Search Results Dropdown */}
         {searchResults && (
           <div className="glass-panel" style={{
             position: 'absolute',
@@ -95,7 +114,7 @@ export const Navbar = ({ onToggleMobileSidebar }) => {
             zIndex: 100,
             padding: '1rem',
             background: 'rgba(15, 23, 42, 0.98)',
-            maxHeight: '300px',
+            maxHeight: '280px',
             overflowY: 'auto'
           }}>
             <h4 style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>TASKS MATCHES</h4>
@@ -123,46 +142,102 @@ export const Navbar = ({ onToggleMobileSidebar }) => {
         )}
       </div>
 
-      {/* User & Quick Status */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem',
-          background: 'rgba(255, 255, 255, 0.05)',
-          padding: '0.35rem 0.85rem',
-          borderRadius: 'var(--radius-full)',
-          border: '1px solid var(--border-color)'
-        }}>
-          <UserCheck size={16} color="var(--accent-emerald)" />
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: 500 }}>
-            {displayCourse} • {displayYear}
-          </span>
+      {/* Right Controls: Date, Notifications, Settings, User Profile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        
+        {/* Date Display */}
+        <div style={{ fontSize: '0.825rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+          {currentDateFormatted}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Notification Icon Badge */}
+        <button
+          onClick={() => navigate('/notifications')}
+          title="Notifications"
+          style={{
+            position: 'relative',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '50%',
+            width: '36px',
+            height: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-main)',
+            cursor: 'pointer'
+          }}
+        >
+          <Bell size={18} />
+          {unreadCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-2px',
+              right: '-2px',
+              width: '14px',
+              height: '14px',
+              borderRadius: '50%',
+              background: 'var(--accent-rose)',
+              color: '#fff',
+              fontSize: '0.65rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {unreadCount}
+            </span>
+          )}
+        </button>
+
+        {/* Settings Button */}
+        <button
+          onClick={() => navigate('/settings')}
+          title="Settings"
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '50%',
+            width: '36px',
+            height: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-main)',
+            cursor: 'pointer'
+          }}
+        >
+          <Settings size={18} />
+        </button>
+
+        {/* Profile Avatar */}
+        <div
+          onClick={() => navigate('/profile')}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer' }}
+        >
           <div style={{
             width: '36px',
             height: '36px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-cyan))',
+            background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 700,
             fontSize: '0.9rem',
             color: '#fff',
-            boxShadow: '0 0 10px rgba(99, 102, 241, 0.4)'
+            boxShadow: '0 0 10px rgba(14, 165, 233, 0.3)'
           }}>
             {displayName.charAt(0)}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>{displayName}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{displayCollege}</div>
-          </div>
         </div>
 
-        <button onClick={logout} title="Logout" style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.3rem' }}>
+        {/* Logout */}
+        <button
+          onClick={logout}
+          title="Logout"
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.2rem' }}
+        >
           <LogOut size={18} />
         </button>
       </div>

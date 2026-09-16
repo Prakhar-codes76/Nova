@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Include API routers
-from app.routes import health, auth, profile, users, tasks, timetable, focus, progress, ai, search, voice_webhooks
+from app.routes import health, auth, profile, users, tasks, timetable, focus, progress, ai, search, voice_webhooks, notifications
 
 # Initialize Database tables and Seed data
 try:
@@ -55,6 +55,8 @@ app.include_router(progress.router, prefix=settings.API_V1_STR)
 app.include_router(ai.router, prefix=settings.API_V1_STR)
 app.include_router(search.router, prefix=settings.API_V1_STR)
 app.include_router(voice_webhooks.router, prefix=settings.API_V1_STR)
+app.include_router(notifications.router, prefix=settings.API_V1_STR)
+
 
 @app.get("/")
 def root():

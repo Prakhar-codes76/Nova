@@ -4,5 +4,7 @@ from app.models.task import Task
 from app.models.timetable import Timetable
 from app.models.focus import FocusSession
 from app.models.study import StudySession
+from app.models.notification import Notification
 
-__all__ = ["Base", "User", "Task", "Timetable", "FocusSession", "StudySession"]
+__all__ = ["Base", "User", "Task", "Timetable", "FocusSession", "StudySession", "Notification"]
+
